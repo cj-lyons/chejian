@@ -57,7 +57,11 @@
         const renderer = new THREE.WebGLRenderer({ antialias: true, precision: 'highp' });
         renderer.setSize(window.innerWidth, window.innerHeight);
         renderer.shadowMap.enabled = true;
-        renderer.shadowMap.type = THREE.PCFShadowShadowMap;
+        renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+        renderer.outputEncoding = THREE.sRGBEncoding;
+        renderer.toneMapping = THREE.ACESFilmicToneMapping;
+        renderer.toneMappingExposure = 1.1;
+        renderer.physicallyCorrectLights = true;
         renderer.shadowMap.needsUpdate = true;
         document.body.appendChild(renderer.domElement);
 
@@ -227,9 +231,9 @@
         // Ground with reflection surface
         const groundGeometry = new THREE.PlaneGeometry(400, 400);
         const groundMaterial = new THREE.MeshStandardMaterial({
-            color: 0x1a1a1a,
-            roughness: 0.7,
-            metalness: 0.2
+            color: 0x111111,
+            roughness: 0.35,
+            metalness: 0.4
         });
         const ground = new THREE.Mesh(groundGeometry, groundMaterial);
         ground.rotation.x = -Math.PI / 2;
@@ -239,9 +243,9 @@
         // Reflective water feature
         const poolGeometry = new THREE.PlaneGeometry(80, 60);
         const poolMaterial = new THREE.MeshStandardMaterial({
-            color: 0x0a1a3a,
-            roughness: 0.1,
-            metalness: 0.8
+            color: 0x071629,
+            roughness: 0.05,
+            metalness: 0.95
         });
         const pool = new THREE.Mesh(poolGeometry, poolMaterial);
         pool.rotation.x = -Math.PI / 2;
@@ -301,7 +305,8 @@
             cameraOrbit.angle += cameraOrbit.speed;
             const x = Math.cos(cameraOrbit.angle) * cameraOrbit.radius;
             const z = Math.sin(cameraOrbit.angle) * cameraOrbit.radius;
-            camera.position.set(x, cameraOrbit.height, z);
+            const y = cameraOrbit.height + Math.sin(cameraOrbit.angle * 0.7) * 2;
+            camera.position.set(x, y, z);
             camera.lookAt(0, 20, 0);
         }
 
